@@ -19,7 +19,12 @@ public class Reader {
         List<Token> nodeList = new ArrayList<>();
         int ich =pushbackReader.read();
         while (ich != -1){
-            nodeList.add( readNode(pushbackReader));
+            pushbackReader.unread(ich);
+            Token token = readNode(pushbackReader);
+            if(token ==Token.END_TOKEN){
+                break;
+            }
+            nodeList.add( token);
              ich =pushbackReader.read();
 
         }
@@ -28,7 +33,8 @@ public class Reader {
 
     private Token readNode(PushbackReader pushbackReader) throws IOException {
         readWhitespace(pushbackReader);
-        char ch = (char) pushbackReader.read();
+        int ich =pushbackReader.read();
+        char ch = (char) ich;
        if( ch ==Token.ASSIGN){
             return new AssignNode();
         }else if(ch == Token.OPEN_PARENTHESIS){
@@ -44,10 +50,11 @@ public class Reader {
            return  readWordNode(pushbackReader);
         }else if(ch == Token.DOUBLE_QUOTE){
            return  readStringToken(pushbackReader);
-       }else {
-            pushbackReader.unread(ch);
        }
-        return Token.END_TOKEN;
+       if(ich == -1){
+             return Token.END_TOKEN;
+       }
+       throw  new IllegalArgumentException("invalid char");
     }
 
     public List<Token>  read(String sourceCode) throws IOException{
@@ -78,7 +85,7 @@ public class Reader {
             ch = (char) reader.read();
         }
         reader.unread(ch);
-        return new Token.WordNode(sb.toString());
+        return new Token.WordToken(sb.toString());
     }
 
 

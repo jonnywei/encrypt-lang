@@ -1,23 +1,37 @@
 package com.encryptlang.env;
 
+
+import com.encryptlang.form.Form;
+
 import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Created by jianjunwei on 2017/7/5.
+ *
+ * environment
+ *
+ * Created by wjj on 6/11/17.
  */
 public class Environment {
+    private final HashMap<Form.SymbolForm, Object> env = new HashMap<>();
 
-    private Map<String , Object> env =  new HashMap<>();
+    private Environment parent; //parent
 
-
-
-    public Object getValue(String key){
-        return env.get(key);
-
+    public Environment() {
     }
 
-    public Object putValue(String key ,String value){
-        return env.put(key,value);
+    public Environment(Environment parent) {
+        this.parent = parent;
+    }
+
+    public Object getValue(Form.SymbolForm symbolForm){
+        Object result = env.get(symbolForm);
+        if(parent != null &&  result == null ){
+            return  parent.getValue(symbolForm);
+        }
+        return result;
+    }
+
+    public Object putValue(Form.SymbolForm symbolForm, Object object){
+        return env.put(symbolForm,object);
     }
 }

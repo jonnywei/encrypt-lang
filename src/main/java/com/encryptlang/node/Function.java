@@ -1,14 +1,19 @@
 package com.encryptlang.node;
 
+import com.encryptlang.env.Environment;
+
 /**
  * Created by jianjunwei on 2017/7/5.
  */
-public interface Function extends Token {
+public interface Function  {
 
     /**
-     * 函数求值
+     * apply function
      * @param args
      * @return
      */
-    Object apply(Object[] args);
+    Object apply (Object... args);
+
+
+    Object eval(Environment env);
 }

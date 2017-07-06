@@ -5,9 +5,12 @@ package com.encryptlang.node;
  */
 public interface Token {
 
-    public static final Token END_TOKEN = new Token() {
+    final Token END_TOKEN = new Token() {
         @Override public Object eval(Object[] args) {
             return null;
+        }
+        @Override public String getName() {
+            return "EOF";
         }
     };
 
@@ -28,11 +31,17 @@ public interface Token {
     Object eval(Object[] args);
 
 
+    String getName();
+
 
     class  OpenParenthensis implements Token {
 
         @Override public Object eval(Object[] args) {
             return null;
+        }
+
+        @Override public String getName() {
+            return String.valueOf(OPEN_PARENTHESIS);
         }
     }
 
@@ -42,6 +51,9 @@ public interface Token {
         @Override public Object eval(Object[] args) {
             return null;
         }
+         @Override public String getName() {
+             return null;
+         }
     }
 
      class  Assign implements Token {
@@ -49,6 +61,9 @@ public interface Token {
         @Override public Object eval(Object[] args) {
             return null;
         }
+         @Override public String getName() {
+             return String.valueOf(Token.ASSIGN);
+         }
     }
 
 
@@ -63,18 +78,24 @@ public interface Token {
         @Override public Object eval(Object[] args) {
             return val;
         }
+         @Override public String getName() {
+             return null;
+         }
 
     }
 
-    class WordNode implements Token {
+    class WordToken implements Token {
 
         String  val ;
 
-        public WordNode(String val) {
+        public WordToken(String val) {
             this.val = val;
         }
 
         @Override public Object eval(Object[] args) {
+            return val;
+        }
+        @Override public String getName() {
             return val;
         }
 
@@ -89,6 +110,9 @@ public interface Token {
         @Override public Object eval(Object[] args) {
             return val;
         }
+        @Override public String getName() {
+            return null;
+        }
     }
     class Comma implements Token{
         String  val  =",";
@@ -98,6 +122,9 @@ public interface Token {
 
         @Override public Object eval(Object[] args) {
             return val;
+        }
+        @Override public String getName() {
+            return null;
         }
     }
 }
