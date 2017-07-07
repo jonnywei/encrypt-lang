@@ -134,7 +134,12 @@ public class Parser {
         Token curent = currentToken;
         Token plus = nextToken();
         Node expression = parseExpression();
-        return new AddNode(curent,expression);
+         Node a = new AddNode(curent,expression);
+        Token lookahead = lookahead();
+//        if(lookahead.type == Token.Type.Sign && lookahead.value.equals("+")){
+//            return new AddNode(a, parseConcateExpression());
+//        }
+        return a ;
     }
 
 

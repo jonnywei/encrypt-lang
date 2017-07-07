@@ -30,4 +30,39 @@ public class TestParser {
         ExpressionBlockNode node = parser.parse();
         System.out.print(node);
     }
+
+
+
+    @Test
+    public void testParserThreeVariableAdd () throws IOException {
+        String exp = "request.json = \"a\" +\"b\" +\"c\"\n";
+
+        Reader reader = new StringReader(exp);
+
+        Lexer lexer = new Lexer(reader);
+
+        Parser parser = new Parser(lexer);
+
+
+
+        ExpressionBlockNode node = parser.parse();
+        System.out.print(node);
+    }
+
+
+    @Test
+    public void testParserThreeVarAndFunctionAdd () throws IOException {
+        String exp = "request.json = \"a\" + change(\"me\") +\"c\"\n";
+
+        Reader reader = new StringReader(exp);
+
+        Lexer lexer = new Lexer(reader);
+
+        Parser parser = new Parser(lexer);
+
+
+
+        ExpressionBlockNode node = parser.parse();
+        System.out.print(node);
+    }
 }
