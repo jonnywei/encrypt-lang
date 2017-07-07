@@ -21,7 +21,7 @@ public class Parser {
             Token t = tokenList.get(i);
             if(t instanceof Token.WordToken ){
                 //匹配 define名字
-                matchDefineFormat();
+//                matchDefineFormat();
 
             }
         }
@@ -59,41 +59,41 @@ public class Parser {
         return null;
     }
 
-
-    public ListForm matchFunctionFormat(List<Token> tokenList, int idx){
-        Token.WordToken fname = (Token.WordToken ) tokenList.get(idx++);
-        Token  next = tokenList.get(idx++);
-        if(next  instanceof  Token.OpenParenthensis){
-
-        }
-        Token.WordToken fname = (Token.WordToken ) tokenList.get(idx++);
-        Token.WordToken fname = (Token.WordToken ) tokenList.get(idx++);
-
-        return null;
-    }
-
-
-    public ListForm matchFunctionParamListFormat(List<Token> tokenList, int idx){
-
-        ListForm  param = matchExpression(tokenList, idx);
-
-
-        ListForm  param = matchExpression(tokenList, idx);
-        ListForm  param = matchExpression(tokenList, idx);
-
-
-        if(next  instanceof  Token.OpenParenthensis){
-
-        }
-        Token.WordToken fname = (Token.WordToken ) tokenList.get(idx++);
-        Token.WordToken fname = (Token.WordToken ) tokenList.get(idx++);
-
-        return null;
-    }
-
-    public ListForm matchPlusFormat(List<Token> tokenList, int idx){
-        Token.WordToken t = (Token.WordToken ) tokenList.get(idx++);
-        return null;
-    }
+//
+//    public ListForm matchFunctionFormat(List<Token> tokenList, int idx){
+//        Token.WordToken fname = (Token.WordToken ) tokenList.get(idx++);
+//        Token  next = tokenList.get(idx++);
+//        if(next  instanceof  Token.OpenParenthensis){
+//
+//        }
+//        Token.WordToken fname = (Token.WordToken ) tokenList.get(idx++);
+//        Token.WordToken fname = (Token.WordToken ) tokenList.get(idx++);
+//
+//        return null;
+//    }
+//
+//
+//    public ListForm matchFunctionParamListFormat(List<Token> tokenList, int idx){
+//
+//        ListForm  param = matchExpression(tokenList, idx);
+//
+//
+//        ListForm  param = matchExpression(tokenList, idx);
+//        ListForm  param = matchExpression(tokenList, idx);
+//
+//
+//        if(next  instanceof  Token.OpenParenthensis){
+//
+//        }
+//        Token.WordToken fname = (Token.WordToken ) tokenList.get(idx++);
+//        Token.WordToken fname = (Token.WordToken ) tokenList.get(idx++);
+//
+//        return null;
+//    }
+//
+//    public ListForm matchPlusFormat(List<Token> tokenList, int idx){
+//        Token.WordToken t = (Token.WordToken ) tokenList.get(idx++);
+//        return null;
+//    }
 
 }

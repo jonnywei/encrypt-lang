@@ -12,4 +12,8 @@ public class AssignNode implements Token {
     @Override public Object eval(Object[] args) {
         return null;
     }
+
+    @Override public String getName() {
+        return null;
+    }
 }

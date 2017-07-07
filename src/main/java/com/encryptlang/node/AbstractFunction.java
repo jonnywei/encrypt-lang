@@ -1,5 +1,7 @@
 package com.encryptlang.node;
 
+import com.encryptlang.env.Environment;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +19,12 @@ public class AbstractFunction implements Function {
         this.paramList = paramList;
     }
 
-    @Override public Object eval(Object[] args) {
+
+    @Override public Object apply(Object[] args) {
         return null;
     }
 
-    @Override public Object apply(Object[] args) {
+    @Override public Object eval(Environment env) {
         return null;
     }
 }
