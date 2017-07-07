@@ -1,7 +1,7 @@
-package com.encryptlang;
+package com.encryptlang.v0;
 
-import com.encryptlang.node.AssignNode;
-import com.encryptlang.node.Token;
+import com.encryptlang.v0.node.AssignNode;
+import com.encryptlang.v0.node.Token;
 
 import java.io.IOException;
 import java.io.PushbackReader;

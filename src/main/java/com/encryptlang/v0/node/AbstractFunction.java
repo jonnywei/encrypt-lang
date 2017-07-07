@@ -1,6 +1,6 @@
-package com.encryptlang.node;
+package com.encryptlang.v0.node;
 
-import com.encryptlang.env.Environment;
+import com.encryptlang.v0.env.Environment;
 
 import java.util.ArrayList;
 import java.util.List;

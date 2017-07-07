@@ -35,6 +35,7 @@ public class Tester {
         ExpressionBlockNode node = parser.parse();
         System.out.print(node);
 
+        System.out.println();
 
     }
 }
