@@ -22,7 +22,6 @@ public class Parser {
 
 
 
-
     public Parser(Lexer lexer) {
         this.lexer = lexer;
         lookaheadConsumed = true;
@@ -130,6 +129,7 @@ public class Parser {
     }
 
 
+    //not support
     private Node parseConcateExpression() throws IOException{
         Token curent = currentToken;
         Token plus = nextToken();

@@ -14,7 +14,7 @@ public class TestLexer {
 
     @Test
     public void testLexer () throws IOException {
-        String exp = "request.json = \"h\" +\"xdsafds\"\n";
+        String exp ="a = b(r)";
 
         Reader reader = new StringReader(exp);
 

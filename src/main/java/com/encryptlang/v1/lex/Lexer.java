@@ -53,7 +53,7 @@ public class Lexer {
 
         }
 
-        Token token = tokenBuffer.removeLast();
+        Token token = tokenBuffer.removeFirst();
 
         if(token.type == Token.Type.EndSymbol){
             endToken = token;

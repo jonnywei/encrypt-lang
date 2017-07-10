@@ -119,4 +119,20 @@ public class TestParser {
         ExpressionBlockNode node = parser.parse();
         System.out.print(node.eval(environment));
     }
+
+
+    @Test
+    public void testFunctionCallOneStatement () throws IOException {
+        String exp = "request.body = BASE64(request.body)";
+
+        Reader reader = new StringReader(exp);
+
+        Lexer lexer = new Lexer(reader);
+
+        Parser parser = new Parser(lexer);
+
+        Environment environment = BaseEnvironment.getBaseEnvironment();
+        ExpressionBlockNode node = parser.parse();
+        System.out.print(node.eval(environment));
+    }
 }
