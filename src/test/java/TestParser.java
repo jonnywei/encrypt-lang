@@ -85,4 +85,38 @@ public class TestParser {
         ExpressionBlockNode node = parser.parse();
         System.out.print(node.eval(environment));
     }
+
+
+    @Test
+    public void testFunctionCall () throws IOException {
+        String exp = "var helo = DES()\n" + "var twoparam = AES(a, \"ccc\")\n" + "var oneparem =DES(a)\n" + "var threeparam = AES(a, b, c)\n";
+
+        Reader reader = new StringReader(exp);
+
+        Lexer lexer = new Lexer(reader);
+
+        Parser parser = new Parser(lexer);
+
+        Environment environment = BaseEnvironment.getBaseEnvironment();
+        ExpressionBlockNode node = parser.parse();
+        System.out.print(node.eval(environment));
+    }
+
+
+
+    @Test
+    public void testFunctionCallAppend () throws IOException {
+        String exp = "var helo = \"hello wei\"\n" + "var twoparam = AES( helo, \"ccc\")\n" + "var oneparem =DES(twoparam)\n"
+                     + "var threeparam = AES(oneparem, \"ccc\", \"ddddd\", DES(\"222\"))\n" + "var last = APPEND(threeparam,\"END\")";
+
+        Reader reader = new StringReader(exp);
+
+        Lexer lexer = new Lexer(reader);
+
+        Parser parser = new Parser(lexer);
+
+        Environment environment = BaseEnvironment.getBaseEnvironment();
+        ExpressionBlockNode node = parser.parse();
+        System.out.print(node.eval(environment));
+    }
 }

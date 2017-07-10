@@ -30,4 +30,25 @@ public class TestLexer {
             }
         }
     }
+
+
+
+    @Test
+    public void testFunctionCall () throws IOException {
+        String exp = "var helo = abc()\n" + "var twoparam = bcd(a, \"ccc\")\n" + "var oneparem =xxx(a)\n" + "var threeparam = tp(a, b, c)";
+
+        Reader reader = new StringReader(exp);
+
+        Lexer lexer = new Lexer(reader);
+        Parser parser = new Parser(lexer);
+
+        while (true){
+
+            Token token = parser.nextToken();
+            System.out.print(token);
+            if (token.type == Token.Type.EndSymbol){
+                break;
+            }
+        }
+    }
 }

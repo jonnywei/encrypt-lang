@@ -124,7 +124,7 @@ public class Parser {
     private Node parseFunctionCallExpression ()  throws IOException{
         String fuctionName = this.currentToken.value;
         Token beginSign = nextToken();
-        Node paramNode =  parseParamExpression();
+        ListNode paramNode =  parseParamExpression();
         Token endSign = nextToken();
         return new FunctionCallNode(fuctionName, paramNode);
     }
@@ -144,8 +144,35 @@ public class Parser {
 
 
 
-    private Node parseParamExpression() throws IOException{
-        return parseExpression();
+
+    private ListNode parseParamExpression() throws IOException{
+
+        ListNode paramNode = new ListNode();
+        parseParamExpression(paramNode);
+        return paramNode;
+
+    }
+
+
+    private void parseParamExpression(   ListNode paramNode ) throws IOException{
+
+        Token next = lookahead();
+        if(next.type == Token.Type.Sign && next.value.equals(")")){
+              paramNode.addNode(Node.EMPTY);
+              return;
+        }
+        Node expression =  parseExpression();
+        paramNode.addNode(expression);
+         next = lookahead();
+        if(next.type == Token.Type.Sign && next.value.equals(",")){
+            nextToken();
+            parseParamExpression(paramNode);
+        }
+        if(next.type == Token.Type.Sign && next.value.equals(")")){
+            paramNode.addNode(Node.EMPTY);
+            return;
+        }
+
     }
 
 

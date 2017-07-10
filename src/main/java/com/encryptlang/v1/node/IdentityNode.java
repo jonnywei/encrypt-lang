@@ -15,6 +15,6 @@ public class IdentityNode implements Node {
 
 
     @Override public Object eval(Environment env) {
-        return name;
+        return env.getValue(name);
     }
 }

@@ -7,6 +7,12 @@ import com.encryptlang.v1.env.Environment;
  */
 public interface Node {
 
+    Node EMPTY = new Node() {
+        @Override public Object eval(Environment env) {
+            return null;
+        }
+    };
+
     Object eval(Environment env);
 
 }

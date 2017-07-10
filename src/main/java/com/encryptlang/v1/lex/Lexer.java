@@ -81,7 +81,7 @@ public class Lexer {
         if(state == State.Normal){
             if(isIdentifierChar(c)){
                 state = State.Identifier;
-            }else  if (c =='+' || c =='=' || c==')' || c =='('){
+            }else  if (c =='+' || c =='=' || c==')' || c =='(' || c==','){
 
                 state = State.Sign;
 

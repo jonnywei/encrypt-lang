@@ -18,6 +18,8 @@ public class DefineNode implements Node {
 
 
     @Override public Object eval(Environment env) {
-        return  env.putValue(varName, expressionNode.eval(env));
+        Object result = expressionNode.eval(env);
+        env.putValue(varName, result);
+        return  result;
     }
 }
