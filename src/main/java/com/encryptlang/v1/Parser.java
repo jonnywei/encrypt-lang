@@ -135,7 +135,7 @@ public class Parser {
         Token plus = nextToken();
         Node expression = parseExpression();
          Node a = new AddNode(curent,expression);
-        Token lookahead = lookahead();
+//        Token lookahead = lookahead();
 //        if(lookahead.type == Token.Type.Sign && lookahead.value.equals("+")){
 //            return new AddNode(a, parseConcateExpression());
 //        }

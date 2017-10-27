@@ -18,6 +18,6 @@ public class AddNode implements Node {
     }
 
     @Override public Object eval(Environment env) {
-        return last.eval(env);
+        return first.value + last.eval(env);
     }
 }

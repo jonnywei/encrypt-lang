@@ -54,7 +54,7 @@ public class TestParser {
 
     @Test
     public void testParserThreeVarAndFunctionAdd () throws IOException {
-        String exp = "request.json = \"a\" + change(\"me\") +\"c\"\n";
+        String exp = "request.json = \"a\" + BASE64(\"me\") +\"c\"\n";
 
         Reader reader = new StringReader(exp);
 
@@ -63,9 +63,11 @@ public class TestParser {
         Parser parser = new Parser(lexer);
 
 
-
+        Environment environment = BaseEnvironment.getBaseEnvironment();
         ExpressionBlockNode node = parser.parse();
         System.out.print(node);
+        System.out.print(node.eval(environment));
+
     }
 
 
