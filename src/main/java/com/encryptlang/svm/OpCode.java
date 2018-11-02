@@ -55,9 +55,34 @@ public class   OpCode {
      * subroutine
      */
 
+    /**
+     sub_function(arg1, arg2, arg3);
+
+     |    ....       | high address
+     +---------------+
+     | arg: 1        |    new_bp + 4
+     +---------------+
+     | arg: 2        |    new_bp + 3
+     +---------------+
+     | arg: 3        |    new_bp + 2
+     +---------------+
+     |return address |    new_bp + 1
+     +---------------+
+     | old BP        |   <- new BP
+     +---------------+
+     | local var 1   |    new_bp - 1
+     +---------------+
+     | local var 2   |    new_bp - 2
+     +---------------+
+     |    ....       |  low address
+     */
+
+
     public static final int CALL = 50;
 
     public static final int RET = 51;
+
+    public static final int LOAD_ARG = 52;
 
     /**
      * Other

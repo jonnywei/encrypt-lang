@@ -6,7 +6,6 @@ public class StackVM {
 
     // code
     int[] code;
-
     //data
     int[] data;
 
@@ -45,7 +44,7 @@ public class StackVM {
             int opcode = this.code[this.pc++];
             int a,b,v, addr;
             switch (opcode) { //decode
-
+                case NOP: break;
                 case HALT: running = false; break;
                 case PRINT:
                     v = this.stack[this.sp--];
@@ -55,6 +54,21 @@ public class StackVM {
                     b = this.stack[this.sp--];
                     a = this.stack[this.sp--];
                     this.stack[++this.sp] = (a + b);
+                    break;
+                case SUB:
+                    b = this.stack[this.sp--];
+                    a = this.stack[this.sp--];
+                    this.stack[++this.sp] = (a - b);
+                    break;
+                case EQ:
+                    b = this.stack[this.sp--];
+                    a = this.stack[this.sp--];
+                    this.stack[++this.sp] = a == b? 1:0;
+                    break;
+                case LT:
+                    b = this.stack[this.sp--];
+                    a = this.stack[this.sp--];
+                    this.stack[++this.sp] = a < b? 1:0;
                     break;
                 case CONST:
                     v = this.code[this.pc++];
@@ -70,6 +84,13 @@ public class StackVM {
                         this.pc = v;
                     }
                     break;
+                case JMPF:
+                    v  =  this.code[this.pc++];
+                    a = this.stack[this.sp--];
+                    if(a == 0){
+                        this.pc = v;
+                    }
+                    break;
                 case LOAD:
                     addr = this.stack[this.sp--];
                     this.stack[++ this.sp ] = this.data[addr];
@@ -77,6 +98,11 @@ public class StackVM {
                 case STORE:
                     addr = this.stack[this.sp--];
                     this.data[addr] = this.stack[++ this.sp ] ;
+                    break;
+                case LOAD_ARG:
+                    a =  this.code[this.pc++];
+                    this.stack[++this.sp] = this.stack[this.fp - 2 - a];
+                    break;
                 case CALL:
                     doCall();break;
                 case RET:
@@ -119,8 +145,30 @@ public class StackVM {
                 CALL ,7, 1,
                 PRINT,
                 HALT,
-                CONST,128,
-                RET
+                LOAD_ARG, 1,
+                CONST, 0,
+                EQ,
+                JMPF, 17,
+                CONST,0,
+                RET,
+                LOAD_ARG, 1,
+                CONST , 3,
+                LT,
+                JMPF, 27,
+                CONST,1,
+                RET,
+                // else return f(n-1) + f(n-2)
+                LOAD_ARG, 1,
+                CONST,1,
+                SUB,
+                CALL,7,1,
+                LOAD_ARG, 1,
+                CONST,2,
+                SUB,
+                CALL,7,1,
+                ADD,
+                RET,
+
         };
 
         StackVM vm = new StackVM(program,0, 0,1024);
