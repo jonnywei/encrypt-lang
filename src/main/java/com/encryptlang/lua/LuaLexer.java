@@ -33,6 +33,10 @@ public class LuaLexer extends Lexer {
                consume(); return new Token(TokenType.SUB,"-");
            }else if( c =='*'){
                consume(); return new Token(TokenType.MUL,"*");
+           }else if( c =='/'){
+               consume(); return new Token(TokenType.DIV,"/");
+           }else if( c =='^'){
+               consume(); return new Token(TokenType.POWER,"^");
            }else if( c =='#'){
                consume(); return new Token(TokenType.SHARP,"#");
            }else if( c ==';'){

@@ -23,8 +23,9 @@ public enum TokenType {
     SEMI("SEMI"),
     ADD("ADD"),            // +
     SUB("SUB"),            // -
-    DIV("DIV"),
-    MUL("MUL"),
+    DIV("DIV"),            // /
+    MUL("MUL"),            // *
+    POWER("POWER"),        // ^
     GT("GT"),              // >
     GE("GE"),              // >=
     SHR("SHR"),            // >>

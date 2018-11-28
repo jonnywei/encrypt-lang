@@ -212,7 +212,8 @@ public class LuaParser extends LLkParser {
     private ExprNode expr0(){
         ExprNode expr = exprn();
         while(LA(1) == TokenType.ADD ||LA(1) == TokenType.SUB
-                || LA(1) == TokenType.MUL ||LA(1) == TokenType.DIV ){
+                || LA(1) == TokenType.MUL || LA(1) == TokenType.DIV
+                || LA(1) == TokenType.POWER){
             TokenType op = this.LA(1);
             match(op); //消耗掉
             expr = new BinopExpr(op,expr, exprn());
