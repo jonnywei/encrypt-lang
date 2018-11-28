@@ -23,6 +23,9 @@ public class Token {
         KEYWORDS.put("elseif",TokenType.ELSEIF);
         KEYWORDS.put("repeat",TokenType.REPEAT);
         KEYWORDS.put("until",TokenType.UNTIL);
+        KEYWORDS.put("for",TokenType.FOR);
+        KEYWORDS.put("in",TokenType.IN);
+
     }
 
 

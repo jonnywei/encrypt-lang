@@ -7,7 +7,7 @@ public abstract class LLkParser {
     final  int k;
     int p = 0;
 
-    public LLkParser(Lexer lexer,int k) {
+    public LLkParser(Lexer lexer, int k) {
         this.lexer = lexer;
         this.k = k;
         for(int i =0; i<k; i++){

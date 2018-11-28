@@ -7,6 +7,12 @@ public class AssignStat extends StatNode {
 
     public ExprNode expression;
 
+
+    public AssignStat(String variable, ExprNode expression) {
+        this.variable = variable;
+        this.expression = expression;
+    }
+
     @Override
     public String toString() {
         return "Assign";

@@ -8,11 +8,11 @@ public enum TokenType {
     NIL("NIL"),
     FALSE("FALSE"),
     TRUE("TRUE"),
-    COMMA("COMMA"),
-    LBRACK("LBRACK"),
-    RBRACK("RBRACK"),
-    LBRACE("LBRACE"),
-    RBRACE("RBRACE"),
+    COMMA("COMMA"),         // ,
+    LBRACK("LBRACK"),       // [
+    RBRACK("RBRACK"),       // ]
+    LBRACE("LBRACE"),       // {
+    RBRACE("RBRACE"),       // }
     COLON("COLON"),         // :
     LABEL("LABEL"),         // ::
     LPAREN("LPAREN"),       // (
@@ -50,6 +50,7 @@ public enum TokenType {
     ELSE("ELSE"),
     FOR("FOR"),
     IN("IN"),
+
     FUNCTION("FUNCTION"),
     LOCAL("LOCAL"),
     RETURN("RETURN"),

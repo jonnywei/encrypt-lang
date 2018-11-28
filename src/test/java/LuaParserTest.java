@@ -108,10 +108,61 @@ public class LuaParserTest {
 
     @Test
     public void testLuaFuncFuncArg(){
-        String input = "  if true then  func('abc',da() )  else ; end";
+        String input = "  if true then  ABC = fund()  ddd() else ; end";
         LuaLexer jsonLexer = new LuaLexer(input);
         LuaParser parser = new LuaParser(jsonLexer);
         Block block =  parser.block();
         System.out.println(block.toStringTree());
     }
+
+
+
+    @Test
+    public void testLuaFor(){
+        String input = "  if true then  ABC = fund()  ddd() else ; end";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+    @Test
+    public void testLuaForInit(){
+        String input = " for abc ='daf' , true do ddd = dafd() end";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+    @Test
+    public void testLuaForInit2(){
+        String input = " for abc ='daf' , true,'DDDD' do ddd = dafd() end";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+    @Test
+    public void testLuaForIn(){
+        String input = " for ADD,DAF in 'ddddd' do ddd = dafd() end";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+    @Test
+    public void testLuaExpr(){
+        String input = " while 222+223333+343*343  do ddd = dafd() end";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
 }
