@@ -1,7 +1,9 @@
 package com.encryptlang.lua;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Token {
 
@@ -25,7 +27,22 @@ public class Token {
         KEYWORDS.put("until",TokenType.UNTIL);
         KEYWORDS.put("for",TokenType.FOR);
         KEYWORDS.put("in",TokenType.IN);
+    }
 
+    public static Map<TokenType,Integer> BINOPS = new HashMap<>();
+    public static Set<TokenType> BINOP_RIGHT_ASSOC = new HashSet<>();
+
+    static {
+
+        BINOPS.put(TokenType.ADD,1);
+        BINOPS.put(TokenType.SUB,1);
+        BINOPS.put(TokenType.MUL,2);
+        BINOPS.put(TokenType.DIV,2);
+        BINOPS.put(TokenType.POWER,3);
+    }
+
+    static {
+        BINOP_RIGHT_ASSOC.add(TokenType.POWER);
     }
 
 

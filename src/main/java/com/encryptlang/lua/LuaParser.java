@@ -1,10 +1,7 @@
 package com.encryptlang.lua;
 
 import com.encryptlang.lua.ast.*;
-import com.encryptlang.lua.ast.expr.BinopExpr;
-import com.encryptlang.lua.ast.expr.FuncCallExpr;
-import com.encryptlang.lua.ast.expr.NumExpr;
-import com.encryptlang.lua.ast.expr.StringExpr;
+import com.encryptlang.lua.ast.expr.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -202,23 +199,74 @@ public class LuaParser extends LLkParser {
      *
      * 	exprn ::=  nil | false | true | Numeral |LiteralString | unop expr
      *
+     *
+     * 	//
+     *
+     * 	    expr ::= expr0
+     *
+     *     expr0 ::= expr1 { + | - expr1 }
+     *
+     * 	expr1 ::= expr2 { * | / expr2 }
+     *
+     * 	expr2 ::= expr3 { ^  expr3 }
+     *
+     * 	expr3 ::= exprn | unop exprn
+     *
+     *     exprn ::=  nil | false | true | Numeral |LiteralString
+     *
      * @return
      */
 
     public ExprNode expr(){
-        return expr0();
+        return exprPrecedenceClimbing();
+//        return expr0();
     }
-     // expr0 ::= exprn { binop exprn }
+
+     //  expr0 ::= expr1 { + | - expr1 }
     private ExprNode expr0(){
         ExprNode expr = exprn();
-        while(LA(1) == TokenType.ADD ||LA(1) == TokenType.SUB
-                || LA(1) == TokenType.MUL || LA(1) == TokenType.DIV
-                || LA(1) == TokenType.POWER){
+        while(LA(1) == TokenType.ADD ||LA(1) == TokenType.SUB){
             TokenType op = this.LA(1);
             match(op); //消耗掉
-            expr = new BinopExpr(op,expr, exprn());
+            expr = new BinopExpr(op,expr, expr1());
         }
         return  expr;
+    }
+
+//     * 	expr1 ::= expr2 { * | / expr2 }
+    private ExprNode expr1(){
+        ExprNode expr = exprn();
+        while( LA(1) == TokenType.MUL || LA(1) == TokenType.DIV){
+            TokenType op = this.LA(1);
+            match(op); //消耗掉
+            expr = new BinopExpr(op,expr, expr2());
+        }
+        return  expr;
+    }
+
+
+    // expr2 ::= expr3 { ^  expr3 }
+    private ExprNode expr2(){
+        ExprNode expr = expr3();
+        while(LA(1) == TokenType.POWER){
+            TokenType op = this.LA(1);
+            match(op); //消耗掉
+            expr = new BinopExpr(op,expr, expr2());
+        }
+        return  expr;
+    }
+
+
+    private ExprNode expr3(){
+        if(this.LA(1) == TokenType.SUB){
+            match(TokenType.SUB);
+            return  new UnopExpr(TokenType.UNMINUS,exprn());
+        }else {
+            ExprNode expr = exprn();
+            return  expr;
+
+        }
+
     }
 
     private ExprNode exprn(){
@@ -276,4 +324,31 @@ public class LuaParser extends LLkParser {
     }
 
 
+
+
+    public ExprNode exprPrecedenceClimbing(){
+
+        return exprPrecedenceClimbing(expr3(), 0);
+    }
+
+    public ExprNode exprPrecedenceClimbing(ExprNode lhs, int min_precedence ){
+        TokenType lookahead = LA(1);
+        while(( Token.BINOPS.containsKey(lookahead) ) &&
+                Token.BINOPS.get(lookahead)  >= min_precedence ){
+            TokenType op = lookahead;
+            match(op);   // advance to next token
+            ExprNode rhs =  expr3();
+            lookahead =  LA(1);
+            while(( Token.BINOPS.containsKey(lookahead)  && Token.BINOPS.get(lookahead)  > Token.BINOPS.get(op) )
+                    ||
+                    ( Token.BINOP_RIGHT_ASSOC.contains(lookahead) && Token.BINOPS.get(lookahead) == Token.BINOPS.get(op))
+
+            ){
+                rhs = exprPrecedenceClimbing(rhs, Token.BINOPS.get(lookahead));
+                lookahead = LA(1);  //peek next token
+            }
+            lhs = new BinopExpr(op,lhs, rhs);
+        }
+        return lhs;
+    }
 }

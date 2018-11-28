@@ -172,4 +172,13 @@ public class LuaParserTest {
         Block block =  parser.block();
         System.out.println(block.toStringTree());
     }
+
+    @Test
+    public void testLuaExprPowerAss(){
+        String input = " while 222+343*343^2^33/-3-2  do ddd = dafd() end";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
 }
