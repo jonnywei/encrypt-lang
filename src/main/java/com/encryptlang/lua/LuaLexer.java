@@ -13,9 +13,7 @@ public class LuaLexer extends Lexer {
                skipWs();
            }else if( c ==','){
                consume(); return new Token(TokenType.COMMA,",");
-           }else if( c ==':'){
-            consume(); return new Token(TokenType.COLON,":");
-           } else if( c =='{'){
+           }else if( c =='{'){
                consume(); return new Token(TokenType.LBRACE,"{");
            }else if( c =='}'){
                consume(); return new Token(TokenType.RBRACE,"}");

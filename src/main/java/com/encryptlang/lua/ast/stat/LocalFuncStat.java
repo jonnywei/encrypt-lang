@@ -1,21 +1,21 @@
-package com.encryptlang.lua.ast;
+package com.encryptlang.lua.ast.stat;
 
+import com.encryptlang.lua.ast.FuncBody;
+import com.encryptlang.lua.ast.StatNode;
 
-public class FuncCallStat extends StatNode {
-
+public class LocalFuncStat extends StatNode {
     public String name;
+    public FuncBody funcBody;
 
-    public FuncArgs args;
 
-
-    public FuncCallStat(String name, FuncArgs args) {
+    public LocalFuncStat(String name, FuncBody funcBody) {
         this.name = name;
-        this.args = args;
+        this.funcBody = funcBody;
     }
 
     @Override
     public String toString() {
-        return "Func:" +
+        return "LocalFunc:" +
                 "name='" + name + '\'' ;
     }
 
@@ -24,9 +24,10 @@ public class FuncCallStat extends StatNode {
 
         StringBuilder buf = new StringBuilder();
         buf.append("(");
+        
         buf.append(this.toString());
-        buf.append(" ");
-        buf.append(args.toStringTree());
+
+        buf.append(funcBody.toStringTree());
         buf.append(")");
         return buf.toString();
     }

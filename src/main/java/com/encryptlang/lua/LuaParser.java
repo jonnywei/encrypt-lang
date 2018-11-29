@@ -2,6 +2,7 @@ package com.encryptlang.lua;
 
 import com.encryptlang.lua.ast.*;
 import com.encryptlang.lua.ast.expr.*;
+import com.encryptlang.lua.ast.stat.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,28 @@ public class LuaParser extends LLkParser {
         }
         return statements;
     }
+
+    /**
+     * stat ::=  ‘;’ |
+     * 		 varlist ‘=’ explist |
+     * 		 functioncall |
+     * 		 label |
+     * 		 break |
+     * 		 goto Name |
+     * 		 do block end |
+     * 		 while exp do block end |
+     * 		 repeat block until exp |
+     * 		 if exp then block {elseif exp then block} [else block] end |
+     * 		 for Name ‘=’ exp ‘,’ exp [‘,’ exp] do block end |
+     * 		 for namelist in explist do block end |
+     * 		 function funcname funcbody |
+     * 		 local function Name funcbody |
+     * 		 local namelist [‘=’ explist]
+     *
+     *
+     * 		 label ::= ‘::’ Name ‘::’
+     * @return
+     */
     public StatNode statement(){
         switch (LA(1)){
             case DO:           return doStatement();
@@ -34,6 +57,16 @@ public class LuaParser extends LLkParser {
             case IF:           return ifStatement();
             case REPEAT:       return repeatStatement();
             case FOR:          return  forStatement();
+            case FUNCTION:     return functionStatement();
+            case GOTO:         return  gotoStatement();
+            case BREAK:       match(TokenType.BREAK); return new BreakStat();
+            case LABEL:        return  labelStatement();
+            case LOCAL:
+                if(this.LA(2) == TokenType.FUNCTION){  //local function
+                    return localFunctionStatement();
+                }else {                                 // local declarations
+                    return localDeclarationStatement();
+                }
             case ID:
                 System.out.println((this.LT(2)));
                 if(this.LA(2) == TokenType.ASSIGN ){
@@ -57,6 +90,23 @@ public class LuaParser extends LLkParser {
     public StatNode emptyStatement(){
         match(TokenType.SEMI);
         StatNode stat = new EmptyStat();
+        return stat;
+    }
+
+    public StatNode gotoStatement(){
+        match(TokenType.GOTO);
+        String name = LT(1).text;
+        match(TokenType.ID);
+        GotoStat stat = new GotoStat(name);
+        return stat;
+    }
+
+    public StatNode labelStatement(){
+        match(TokenType.LABEL);
+        String name = LT(1).text;
+        match(TokenType.ID);
+        match(TokenType.LABEL);
+        StatNode stat = new LabelStat(name);
         return stat;
     }
 
@@ -103,22 +153,80 @@ public class LuaParser extends LLkParser {
         return new RepeatStat(expr,block);
     }
 
+    /**
+     * function funcname funcbody |
+     * funcname ::= Name {‘.’ Name} [‘:’ Name]
+     * @return
+     */
+    public FuncStat functionStatement(){
+        match(TokenType.FUNCTION);
+        String colonName =null;
+        List<String> dotNames = new ArrayList<>();
+        String name = LT(1).text;
+        match(TokenType.ID);
+        dotNames.add(name);
+        while(LA(1) == TokenType.DOT){
+            match(TokenType.DOT);
+            dotNames.add(LT(1).text);
+            match(TokenType.ID);
+        }
+        if(LA(1) == TokenType.COLON){
+            match(TokenType.COLON);
+            colonName =(LT(1).text);
+            match(TokenType.ID);
+        }
+        FuncStat funcStat = new FuncStat(colonName,dotNames);
+        funcStat.funcBody = funcbody();
+        return funcStat;
+    }
+
+    /**
+     * local function Name funcbody
+     *
+     * @return
+     */
+    public LocalFuncStat localFunctionStatement(){
+        match(TokenType.LOCAL);
+        match(TokenType.FUNCTION);
+        String name = LT(1).text;
+        match(TokenType.ID);
+        return new LocalFuncStat(name,funcbody());
+
+    }
+
+
+    /**
+     * local namelist [‘=’ explist]
+     * namelist ::= Name {‘,’ Name}
+     * 	explist ::= exp {‘,’ exp}
+     * @return
+     */
+    public LocalDeclStat localDeclarationStatement(){
+        match(TokenType.LOCAL);
+        List<String> names = new ArrayList<>();
+        names.add( LT(1).text);
+        match(TokenType.ID);
+        while (LA(1) == TokenType.COMMA ){
+            match(TokenType.COMMA);
+            names.add( LT(1).text);
+            match(TokenType.ID);
+        }
+        match(TokenType.ASSIGN);
+        List<ExprNode> exprs = new ArrayList<>();
+        exprs.add( expr());
+        while (LA(1) == TokenType.COMMA ){
+            match(TokenType.COMMA);
+            exprs.add( expr());
+        }
+        return new LocalDeclStat(names,exprs);
+
+    }
 
 
     public FuncCallStat funcCallStatement(){
         String name = LT(1).text;
         match(TokenType.ID);
-        match(TokenType.LPAREN);
-        List<ExprNode> args = new ArrayList<>();
-        while (LA(1) != TokenType.RPAREN){
-            ExprNode expr = expr();
-            args.add(expr);
-            if(LA(1) == TokenType.COMMA){
-                match(TokenType.COMMA);
-            }
-        }
-        match(TokenType.RPAREN);
-        return new FuncCallStat(name,args);
+        return new FuncCallStat(name,funcArgs());
     }
 
 
@@ -268,9 +376,16 @@ public class LuaParser extends LLkParser {
         }
 
     }
+//     exp ::=  nil | false | true | Numeral | LiteralString | ‘...’ | functiondef |
+//        	 prefixexp | tableconstructor
+//    functiondef ::= function funcbody
+//    tableconstructor ::= ‘{’ [fieldlist] ‘}’
 
     private ExprNode exprn(){
-        if(this.LA(1) == TokenType.TRUE){
+        if(this.LA(1) == TokenType.NIL){
+            match(TokenType.NIL);
+            return new NilExp();
+        }else if(this.LA(1) == TokenType.TRUE){
             match(TokenType.TRUE);
             return new TrueExp();
         }else if(this.LA(1) == TokenType.FALSE){
@@ -284,16 +399,74 @@ public class LuaParser extends LLkParser {
             String str = LT(1).text;
             match(TokenType.STRING);
             return new StringExpr(str);
-        }else if(this.LA(1) ==TokenType.ID){ //这里有多种情况，可能赋值或者函数调用
-            if(this.LA(2) == TokenType.ASSIGN ){
-                return  funcCallExpr();
-            }else if (this.LA(2) == TokenType.LPAREN ){
-                return  funcCallExpr();
-            }
+        } else if(this.LA(1) ==TokenType.VARARG){
+            String str = LT(1).text;
+            match(TokenType.VARARG);
+            return new VarargExpr(str);
+        } else if(this.LA(1) ==TokenType.FUNCTION){
+            return  funcDefExpr();
+        } else if(this.LA(1) ==TokenType.LBRACE){
+            return  tableExpr();
+        }else {
+            return prefixExpr();
         }
-        throw new Error(""+ LT(1));
+
     }
 
+    private ExprNode tableExpr(){
+        return null;
+    }
+
+    public  FuncDefExpr funcDefExpr(){
+        match(TokenType.FUNCTION);
+        FuncDefExpr funcDefExpr = new FuncDefExpr();
+        funcDefExpr.funcBody =  funcbody();
+        return  funcDefExpr;
+    }
+
+    /**
+     * 	funcbody ::= ‘(’ [parlist] ‘)’ block end
+     * 	parlist ::= namelist [‘,’ ‘...’] | ‘...’
+     *	namelist ::= Name {‘,’ Name}
+     *
+     *  ------------
+     *  parlist ::= Name {‘,’ Name} [‘,’ ‘...’] | ‘...’
+     *
+     * @param
+     */
+    private   FuncBody funcbody(){
+        match(TokenType.LPAREN);
+        FuncBody funcBody = new FuncBody();
+        if(LA(1) != TokenType.RPAREN){
+            if(LA(1) == TokenType.VARARG){
+                match(TokenType.VARARG);
+                funcBody.varargExpr = new VarargExpr();
+            }else {
+                List<String> args = new ArrayList<>();
+                funcBody.params = args;
+                args.add(LT(1).text);
+                match(TokenType.ID);
+                while(LA(1) == TokenType.COMMA){
+                    match(TokenType.COMMA);
+                    if(LA(1) == TokenType.ID){
+                        args.add(LT(1).text);
+                        match(TokenType.ID);
+                    }else if(LA(1) == TokenType.VARARG){ //只能出现在最后
+                        match(TokenType.VARARG);
+                        funcBody.varargExpr = new VarargExpr();
+                        break;
+                    }else {
+                        throw new Error("expect name or vararg,but found"+ LT(1));
+                    }
+                }
+            }
+        }
+        match(TokenType.RPAREN);
+        Block block = block();
+        funcBody.block = block;
+        match(TokenType.END);
+        return funcBody;
+    }
 
 
     public FuncCallExpr funcCallExpr(){
@@ -324,8 +497,6 @@ public class LuaParser extends LLkParser {
     }
 
 
-
-
     public ExprNode exprPrecedenceClimbing(){
 
         return exprPrecedenceClimbing(expr3(), 0);
@@ -351,4 +522,119 @@ public class LuaParser extends LLkParser {
         }
         return lhs;
     }
+
+
+    /***
+     *
+     * 	prefixexp ::= var | functioncall | ‘(’ exp ‘)’
+     *	var ::=  Name | prefixexp ‘[’ exp ‘]’ | prefixexp ‘.’ Name
+     *	functioncall ::=  prefixexp args | prefixexp ‘:’ Name args
+     *	args ::=  ‘(’ [explist] ‘)’ | tableconstructor | LiteralString
+     *
+     *----------------------------
+     *
+     *    prefixexp ::=  Name | prefixexp ‘[’ exp ‘]’ | prefixexp ‘.’ Name
+     *                  |  prefixexp args | prefixexp ‘:’ Name args
+     *                  | ‘(’ exp ‘)’
+     *
+     *-------------------------
+     *
+     *    prefixexp ::=  Name  pp | ‘(’ exp ‘)’ pp
+     *
+     *    pp        ::=   ‘[’ exp ‘]’ pp |  ‘.’ Name  pp |   args  pp |  ‘:’ Name args  pp | 空
+     *
+     *
+     *    pp        ::=   ‘[’ exp ‘]’ pp
+     *                   |  ‘.’ Name  pp
+     *                   |   args  pp  === ‘(’ [explist] ‘)’ | tableconstructor | LiteralString
+     *                   |  ‘:’ Name args  pp
+     *                   | 空
+     *
+     */
+
+    private ExprNode prefixExpr(){
+        switch (this.LA(1)){
+            case ID:
+                return namePrefixExpr();
+            case LPAREN:
+                return parenPrefixExpr();
+        }
+        throw new Error(""+ LT(1));
+    }
+   /**
+    *            prefixexp ::=  Name  pp | ‘(’ exp ‘)’ pp
+     *       pp        ::=   ‘[’ exp ‘]’ pp |  ‘.’ Name  pp |   args  pp |  ‘:’ Name args  pp | 空
+     *
+             *
+             *    pp        ::=   ‘[’ exp ‘]’ pp
+     *                   |  ‘.’ Name  pp
+     *                   |   args  pp  === ‘(’ [explist] ‘)’ | tableconstructor | LiteralString
+     *                   |  ‘:’ Name args  pp
+     *                   | 空
+     *
+             */
+
+    private PrefixExpr.NamePrefixExpr namePrefixExpr(){
+        String name = LT(1).text;
+        match(TokenType.ID);
+        PrefixExpr.PrefixSuffixExpr expr = prefixExprSuffix();
+        return new PrefixExpr.NamePrefixExpr(name, expr);
+    }
+//     *            prefixexp ::=  Name  pp | ‘(’ exp ‘)’ pp
+    private PrefixExpr.ParenPrefixExpr parenPrefixExpr(){
+        match(TokenType.LPAREN);
+        ExprNode exprNode = expr();
+        match(TokenType.RPAREN);
+        PrefixExpr.PrefixSuffixExpr expr = prefixExprSuffix();
+        return new PrefixExpr.ParenPrefixExpr(exprNode, expr);
+    }
+
+    /**
+              *    pp ::=‘[’ exp ‘]’ pp
+     *                   |  ‘.’ Name  pp
+     *                   |   args  pp  === ‘(’ [explist] ‘)’ | tableconstructor | LiteralString
+     *                   |  ‘:’ Name args  pp
+     *                   | 空
+     *
+             */
+
+    private PrefixExpr.PrefixSuffixExpr prefixExprSuffix(){
+        switch (this.LA(1)){
+            case LBRACK:
+                match(TokenType.LBRACK);
+                ExprNode exprNode = expr();
+                match(TokenType.RBRACK);
+                return new PrefixExpr.PrefixSuffixExpr(TokenType.LBRACK,exprNode, prefixExprSuffix());
+            case DOT:
+                match(TokenType.DOT);
+                String name = LT(1).text;
+                match(TokenType.ID);
+                return new PrefixExpr.PrefixSuffixExpr(TokenType.DOT, name, prefixExprSuffix());
+            case COLON:
+                match(TokenType.COLON);
+                name = LT(1).text;
+                match(TokenType.ID);
+                FuncArgs funcArgs =funcArgs();
+                return new PrefixExpr.PrefixSuffixExpr(TokenType.COLON, name,funcArgs, prefixExprSuffix());
+            case LPAREN:
+                 funcArgs =funcArgs();
+                return new PrefixExpr.PrefixSuffixExpr(TokenType.FUNCTION, funcArgs, prefixExprSuffix());
+        }
+        return null;
+    }
+
+    private  FuncArgs funcArgs(){
+        match(TokenType.LPAREN);
+        List<ExprNode> args = new ArrayList<>();
+        while (LA(1) != TokenType.RPAREN){
+            ExprNode expr = expr();
+            args.add(expr);
+            if(LA(1) == TokenType.COMMA){
+                match(TokenType.COMMA);
+            }
+        }
+        match(TokenType.RPAREN);
+        return new FuncArgs(args);
+    }
+
 }

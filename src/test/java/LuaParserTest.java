@@ -181,4 +181,98 @@ public class LuaParserTest {
         Block block =  parser.block();
         System.out.println(block.toStringTree());
     }
+
+
+    @Test
+    public void testLuaExprVararg(){
+        String input = " while...  do ddd = dafd() end";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+    @Test
+    public void testLuaExprNil(){
+        String input = " while nil  do ddd = dafd() end";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+    @Test
+    public void testLuaExprFuncDef(){
+        String input = " while function (a , b, ...) ; end  do ; end";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+    @Test
+    public void testLuaStatLocalFunc(){
+        String input = "  function addd.ddd (a,b) ; end";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+
+    @Test
+    public void testLuaStatLocalDecl(){
+        String input = " local dddd,dafd = 3333, 222*222";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+    @Test
+    public void testLuaStatLocalDeclFunExpr(){
+        String input = " local dddd,fn = 3333, abd( '',2,3)";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+    @Test
+    public void testLuaStatGotoLabel(){
+        String input = " goto abc break  :: eee :: ";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+
+    @Test
+    public void testPrefixExpr(){
+        String input = " local dd = dafd[ddd].adf[dddd].aa";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+
+
+    @Test
+    public void testPrefixExprFuncall(){
+        String input = " local dd = dafd[ddd].adf[dddd].aa()";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
 }

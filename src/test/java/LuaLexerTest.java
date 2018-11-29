@@ -237,4 +237,17 @@ public class LuaLexerTest {
 
     }
 
+
+    @Test
+    public  void testLuaLexerLabel(){
+        String input = ":: dff ::  break ";
+
+        LuaLexer jsonLexer = new LuaLexer(input);
+        Token token ;
+        do {
+            token = jsonLexer.nextToken();
+            System.out.println(token);
+        }while (token.type != TokenType.EOF);
+
+    }
 }

@@ -52,8 +52,10 @@ public enum TokenType {
     FOR("FOR"),
     IN("IN"),
 
-    FUNCTION("FUNCTION"),
+    FUNCTION("FUNCTION"), // function
     LOCAL("LOCAL"),
+    BREAK("BREAK"),       // break
+    GOTO("goto"),         // goto
     RETURN("RETURN"),
     AND("AND"),
     OR("OR"),

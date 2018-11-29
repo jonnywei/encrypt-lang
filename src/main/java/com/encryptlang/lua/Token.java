@@ -14,6 +14,7 @@ public class Token {
 
     public static Map<String, TokenType> KEYWORDS = new HashMap<>();
     static {
+
         KEYWORDS.put("do",TokenType.DO);
         KEYWORDS.put("end",TokenType.END);
         KEYWORDS.put("while",TokenType.WHILE);
@@ -27,6 +28,12 @@ public class Token {
         KEYWORDS.put("until",TokenType.UNTIL);
         KEYWORDS.put("for",TokenType.FOR);
         KEYWORDS.put("in",TokenType.IN);
+        KEYWORDS.put("nil",TokenType.NIL);
+        KEYWORDS.put("function",TokenType.FUNCTION);
+        KEYWORDS.put("local",TokenType.LOCAL);
+        KEYWORDS.put("break",TokenType.BREAK);
+        KEYWORDS.put("goto",TokenType.GOTO);
+
     }
 
     public static Map<TokenType,Integer> BINOPS = new HashMap<>();
