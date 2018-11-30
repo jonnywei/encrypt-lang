@@ -27,18 +27,8 @@ public class LuaLexer extends Lexer {
                consume(); return new Token(TokenType.RPAREN,")");
            }else if( c =='+'){
                consume(); return new Token(TokenType.ADD,"+");
-           }else if( c =='-'){
-               consume(); return new Token(TokenType.SUB,"-");
            }else if( c =='*'){
                consume(); return new Token(TokenType.MUL,"*");
-           }else if( c =='/'){
-               consume();
-               if(c  == '/'){ // match IDIV  floor division
-                   consume();
-                   return new Token(TokenType.IDIV, "//");
-               }else {
-                   return new Token(TokenType.DIV,"/");
-               }
            }else if( c =='^'){
                consume(); return new Token(TokenType.POWER,"^");
            }else if( c =='#'){
@@ -51,6 +41,20 @@ public class LuaLexer extends Lexer {
                consume(); return new Token(TokenType.BAND,"&");
            }else if( c =='|'){
                consume(); return new Token(TokenType.BOR,"|");
+           }else if( c =='/'){
+               consume();
+               if(c  == '/'){ // match IDIV  floor division
+                   consume();
+                   return new Token(TokenType.IDIV, "//");
+               }else {
+                   return new Token(TokenType.DIV,"/");
+               }
+           }else if( c =='-'){
+               if(nextChar(1) == '-'){  // match comment
+                    skipComment();
+               }else {
+                    consume(); return new Token(TokenType.SUB,"-");
+               }
            }
            else if( c ==':') {
                consume();
@@ -219,5 +223,36 @@ public class LuaLexer extends Lexer {
             throw new Error("expect char "+ begin + ",but "+ c);
         }
         return new Token(TokenType.STRING, buf.toString());
+    }
+
+
+    private void skipComment(){
+        consume();consume();
+        if(c =='[' && nextChar(1)== '['){
+            skipLongComment();
+        }else {
+            while (c != '\n' && c != EOF) {
+                consume();
+            }
+            if (c == '\n'){
+                line ++;
+                consume();
+            }
+        }
+
+    }
+    private void skipLongComment(){
+        // [[
+        consume();consume();
+        while (c != EOF){
+            // ]]
+           if(c == ']' && nextChar(1) == ']' ){
+               consume();  consume() ;break;
+           }
+            if (c == '\n'){
+                line ++;
+            }
+            consume();
+        }
     }
 }

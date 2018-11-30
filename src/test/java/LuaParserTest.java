@@ -66,7 +66,7 @@ public class LuaParserTest {
 
     @Test
     public void testLuaIfElseRepeat(){
-        String input = "  if true then  repeat ; until false  else ; end";
+        String input = "  --ddd \nif true then  repeat ; until false  else ; end";
         LuaLexer jsonLexer = new LuaLexer(input);
         LuaParser parser = new LuaParser(jsonLexer);
         Block block =  parser.block();

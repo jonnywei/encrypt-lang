@@ -240,7 +240,27 @@ public class LuaLexerTest {
 
     @Test
     public  void testLuaLexerLabel(){
-        String input = ":: dff ::  break ";
+        String input = ":: dff ::  break ---aaaa ";
+
+        LuaLexer jsonLexer = new LuaLexer(input);
+        Token token ;
+        do {
+            token = jsonLexer.nextToken();
+            System.out.println(token);
+        }while (token.type != TokenType.EOF);
+
+    }
+
+
+
+    @Test
+    public  void testLuaLexerComment(){
+        String input = "-- dddd \n" +
+                "print(222)" +
+                "--[[ \n" +
+                "dddddddd" +
+                "]] aa =b" +
+                "--]] ";
 
         LuaLexer jsonLexer = new LuaLexer(input);
         Token token ;
