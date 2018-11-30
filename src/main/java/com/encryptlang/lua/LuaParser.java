@@ -574,19 +574,19 @@ public class LuaParser extends LLkParser {
      *
              */
 
-    private PrefixExpr.NamePrefixExpr namePrefixExpr(){
+    private PrefixExpr2 namePrefixExpr(){
         String name = LT(1).text;
         match(TokenType.ID);
-        PrefixExpr.PrefixSuffixExpr expr = prefixExprSuffix();
-        return new PrefixExpr.NamePrefixExpr(name, expr);
+        PrefixExpr2.NamePrefixExpr  namePrefixExpr =  new PrefixExpr2.NamePrefixExpr(name);
+        return prefixExprSuffix(namePrefixExpr);
     }
 //     *            prefixexp ::=  Name  pp | ‘(’ exp ‘)’ pp
-    private PrefixExpr.ParenPrefixExpr parenPrefixExpr(){
+    private PrefixExpr2 parenPrefixExpr(){
         match(TokenType.LPAREN);
         ExprNode exprNode = expr();
         match(TokenType.RPAREN);
-        PrefixExpr.PrefixSuffixExpr expr = prefixExprSuffix();
-        return new PrefixExpr.ParenPrefixExpr(exprNode, expr);
+        PrefixExpr2.ParenPrefixExpr  parenPrefixExpr =  new PrefixExpr2.ParenPrefixExpr(exprNode);
+        return  prefixExprSuffix(parenPrefixExpr);
     }
 
     /**
@@ -598,29 +598,33 @@ public class LuaParser extends LLkParser {
      *
              */
 
-    private PrefixExpr.PrefixSuffixExpr prefixExprSuffix(){
+    private PrefixExpr2 prefixExprSuffix(PrefixExpr2 lhs){
         switch (this.LA(1)){
             case LBRACK:
                 match(TokenType.LBRACK);
                 ExprNode exprNode = expr();
                 match(TokenType.RBRACK);
-                return new PrefixExpr.PrefixSuffixExpr(TokenType.LBRACK,exprNode, prefixExprSuffix());
+                lhs =  new PrefixExpr2.PrefixSuffixExpr(TokenType.LBRACK,exprNode,lhs);
+                return prefixExprSuffix(lhs);
             case DOT:
                 match(TokenType.DOT);
                 String name = LT(1).text;
                 match(TokenType.ID);
-                return new PrefixExpr.PrefixSuffixExpr(TokenType.DOT, name, prefixExprSuffix());
+                lhs =  new  PrefixExpr2.PrefixSuffixExpr(TokenType.DOT, name,lhs);
+                return prefixExprSuffix(lhs);
             case COLON:
                 match(TokenType.COLON);
                 name = LT(1).text;
                 match(TokenType.ID);
                 FuncArgs funcArgs =funcArgs();
-                return new PrefixExpr.PrefixSuffixExpr(TokenType.COLON, name,funcArgs, prefixExprSuffix());
+                lhs =  new   PrefixExpr2.PrefixSuffixExpr(TokenType.COLON, name,funcArgs, lhs);
+                return prefixExprSuffix(lhs);
             case LPAREN:
                  funcArgs =funcArgs();
-                return new PrefixExpr.PrefixSuffixExpr(TokenType.FUNCTION, funcArgs, prefixExprSuffix());
+                 lhs =  new   PrefixExpr2.PrefixSuffixExpr(TokenType.FUNCTION, funcArgs, lhs);
+                return prefixExprSuffix(lhs);
         }
-        return null;
+        return lhs;
     }
 
     private  FuncArgs funcArgs(){
