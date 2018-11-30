@@ -1,22 +1,18 @@
-package com.encryptlang.lua.ast;
+package com.encryptlang.lua.ast.expr;
 
+import com.encryptlang.lua.ast.ExprNode;
 
-public class FuncCallStat extends StatNode {
+public class NameExpr extends ExprNode {
 
-    public String name;
+    public  String name;
 
-    public FuncArgs args;
-
-
-    public FuncCallStat(String name, FuncArgs args) {
+    public NameExpr(String name) {
         this.name = name;
-        this.args = args;
     }
 
     @Override
     public String toString() {
-        return "Func:" +
-                "name='" + name + '\'' ;
+        return "NameExpr";
     }
 
     @Override
@@ -26,7 +22,7 @@ public class FuncCallStat extends StatNode {
         buf.append("(");
         buf.append(this.toString());
         buf.append(" ");
-        buf.append(args.toStringTree());
+        buf.append(name);
         buf.append(")");
         return buf.toString();
     }

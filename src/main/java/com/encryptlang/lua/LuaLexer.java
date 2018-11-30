@@ -32,13 +32,25 @@ public class LuaLexer extends Lexer {
            }else if( c =='*'){
                consume(); return new Token(TokenType.MUL,"*");
            }else if( c =='/'){
-               consume(); return new Token(TokenType.DIV,"/");
+               consume();
+               if(c  == '/'){ // match IDIV  floor division
+                   consume();
+                   return new Token(TokenType.IDIV, "//");
+               }else {
+                   return new Token(TokenType.DIV,"/");
+               }
            }else if( c =='^'){
                consume(); return new Token(TokenType.POWER,"^");
            }else if( c =='#'){
-               consume(); return new Token(TokenType.SHARP,"#");
+               consume(); return new Token(TokenType.LENGTH,"#");
            }else if( c ==';'){
                consume(); return new Token(TokenType.SEMI,";");
+           }else if( c =='%'){
+               consume(); return new Token(TokenType.MOD,"%");
+           }else if( c =='&'){
+               consume(); return new Token(TokenType.BAND,"&");
+           }else if( c =='|'){
+               consume(); return new Token(TokenType.BOR,"|");
            }
            else if( c ==':') {
                consume();
@@ -100,7 +112,8 @@ public class LuaLexer extends Lexer {
                    consume();consume();
                    return new Token(TokenType.NEQUAL, "~=");
                } else {
-                   throw new Error("invalid char "+ c + " in line "+ line);
+                   consume();
+                   return new Token(TokenType.BXOR, "~");
                }
            }
            else if(isIdFirstChar()){
@@ -112,7 +125,6 @@ public class LuaLexer extends Lexer {
            }else {
                throw new Error("invalid char "+ c + " in line "+ line);
            }
-
         }
         return new Token(TokenType.EOF,"<EOF>");
     }

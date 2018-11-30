@@ -1,10 +1,11 @@
-package com.encryptlang.lua.ast.expr;
+package com.encryptlang.lua.ast.stat;
 
 import com.encryptlang.lua.ast.ExprNode;
 import com.encryptlang.lua.ast.FuncArgs;
+import com.encryptlang.lua.ast.StatNode;
 
 
-public class FuncCallExpr extends ExprNode {
+public class FuncCallStat extends StatNode {
 
     public  ExprNode prefix;
 
@@ -12,7 +13,7 @@ public class FuncCallExpr extends ExprNode {
 
     public FuncArgs args;
 
-    public FuncCallExpr(ExprNode prefix, String name, FuncArgs args) {
+    public FuncCallStat(ExprNode prefix, String name, FuncArgs args) {
         this.prefix = prefix;
         this.name = name;
         this.args = args;
@@ -36,6 +37,7 @@ public class FuncCallExpr extends ExprNode {
             buf.append(":"+name);
         }
         buf.append(args.toStringTree());
+
         buf.append(")");
         return buf.toString();
     }

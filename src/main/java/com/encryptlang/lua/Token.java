@@ -33,19 +33,51 @@ public class Token {
         KEYWORDS.put("local",TokenType.LOCAL);
         KEYWORDS.put("break",TokenType.BREAK);
         KEYWORDS.put("goto",TokenType.GOTO);
+        KEYWORDS.put("return",TokenType.RETURN);
+        KEYWORDS.put("and",TokenType.AND);
+        KEYWORDS.put("or",TokenType.OR);
+        KEYWORDS.put("not",TokenType.NOT);
 
     }
+    public static Map<TokenType,Integer> UNARYOPS = new HashMap<>();
 
     public static Map<TokenType,Integer> BINOPS = new HashMap<>();
     public static Set<TokenType> BINOP_RIGHT_ASSOC = new HashSet<>();
 
+    /**
+     *      or                                         1
+     *      and                                        2
+     *      <     >     <=    >=    ~=    ==           3
+     *      |                                          4
+     *      ~
+     *      &
+     *      <<    >>
+     *      ..
+     *      +     -                                    9
+     *      *     /     //    %                        10
+     *      unary operators (not   #     -     ~)      11
+     *      ^                                          12
+     */
     static {
 
-        BINOPS.put(TokenType.ADD,1);
-        BINOPS.put(TokenType.SUB,1);
-        BINOPS.put(TokenType.MUL,2);
-        BINOPS.put(TokenType.DIV,2);
+        BINOPS.put(TokenType.OR,1);
+        BINOPS.put(TokenType.AND,2);
         BINOPS.put(TokenType.POWER,3);
+
+        BINOPS.put(TokenType.ADD,9);
+        BINOPS.put(TokenType.SUB,9);
+        BINOPS.put(TokenType.MUL,10);
+        BINOPS.put(TokenType.DIV,10);
+
+        BINOPS.put(TokenType.POWER,12);
+
+       //   not   #     -     ~
+        UNARYOPS.put(TokenType.NOT,11);
+        UNARYOPS.put(TokenType.LENGTH,11);
+        UNARYOPS.put(TokenType.SUB,11);
+        UNARYOPS.put(TokenType.BNOT,11);
+
+
     }
 
     static {
@@ -57,6 +89,21 @@ public class Token {
     public Token(TokenType type, String text) {
         this.type = type;
         this.text = text;
+    }
+
+
+
+    public static TokenType isUnary(TokenType type){
+        if(UNARYOPS.containsKey(type) ){
+            if(type == TokenType.SUB){
+                return TokenType.UNMINUS;
+            }
+            if(type == TokenType.BXOR){
+                return TokenType.BNOT;
+            }
+            return type;
+        }
+        return null;
     }
 
     public static Token getKeyWord(String text){

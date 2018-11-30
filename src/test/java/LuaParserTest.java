@@ -275,4 +275,56 @@ public class LuaParserTest {
         Block block =  parser.block();
         System.out.println(block.toStringTree());
     }
+
+
+    @Test
+    public void testAssignStat(){
+        String input = " abvd,ddd[333],fff.addd[33] = 2222,33223";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+    @Test
+    public void testLogicalOperatorStat(){
+        String input = "if ddd and 2222 or dddd  then ; end ";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+
+    @Test
+    public void testLogicalOperatorNot(){
+        String input = "a =  ddd and 2222 or not dddd  ";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+
+    @Test
+    public void testPowerAndNot(){
+        String input = "a =  #ddd and 2222  +  not dddd ^ 333 /4 ";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
+
+
+    @Test
+    public void testPowerAndNotWithParens(){
+        String input = "a =  #ddd and ( 2222  +  not dddd )^ 333 /4 ";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+    }
 }

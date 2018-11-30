@@ -2,7 +2,6 @@ package com.encryptlang.lua.ast.expr;
 
 import com.encryptlang.lua.TokenType;
 import com.encryptlang.lua.ast.ExprNode;
-import com.encryptlang.lua.ast.FuncArgs;
 
 public class PrefixExpr extends ExprNode {
 
@@ -13,78 +12,7 @@ public class PrefixExpr extends ExprNode {
     }
 
 
-    public static class NamePrefixExpr extends PrefixExpr {
-
-        public  String name;
-
-        public  PrefixSuffixExpr suffix;
-
-
-        public NamePrefixExpr(String name, PrefixSuffixExpr suffix) {
-            this.name = name;
-            this.suffix = suffix;
-        }
-
-        @Override
-        public String toString() {
-            return "NamePrefixExpr";
-        }
-
-        @Override
-        public String toStringTree() {
-
-            StringBuilder buf = new StringBuilder();
-            buf.append("(");
-            buf.append(this.toString());
-            buf.append(" ");
-            buf.append(name);
-            buf.append(" ");
-            if(suffix != null){
-                buf.append(suffix.toStringTree());
-            }
-            buf.append(")");
-            return buf.toString();
-        }
-    }
-
-
-    public static class ParenPrefixExpr extends PrefixExpr {
-
-        public  ExprNode expr;
-
-        public  PrefixSuffixExpr suffix;
-
-
-        public ParenPrefixExpr(ExprNode expr, PrefixSuffixExpr suffix) {
-            this.expr = expr;
-            this.suffix = suffix;
-        }
-
-
-        @Override
-        public String toString() {
-            return "ParenPrefixExpr";
-        }
-
-        @Override
-        public String toStringTree() {
-            StringBuilder buf = new StringBuilder();
-            buf.append("(");
-            buf.append(this.toString());
-            buf.append(" ");
-            buf.append(expr.toStringTree());
-            buf.append(" ");
-            if(suffix != null){
-                buf.append(suffix.toStringTree());
-            }
-            buf.append(")");
-            return buf.toString();
-        }
-    }
-
-
-
-    public static class PrefixSuffixExpr extends PrefixExpr {
+    public static class PrefixSuffixExpr extends com.encryptlang.lua.ast.expr.PrefixExpr {
 
         public TokenType tokenType;
 
@@ -92,35 +20,19 @@ public class PrefixExpr extends ExprNode {
 
         public  ExprNode exprNode;
 
-        public FuncArgs funcArgs;
-
-        public  PrefixSuffixExpr expr;
+        public  ExprNode lhs;
 
 
-
-        public PrefixSuffixExpr(TokenType tokenType, String name, FuncArgs funcArgs,PrefixSuffixExpr expr) {
-            this.tokenType = tokenType;
-            this.name = name;
-            this.funcArgs = funcArgs;
-            this.expr = expr;
-        }
-
-        public PrefixSuffixExpr(TokenType tokenType , FuncArgs funcArgs, PrefixSuffixExpr expr) {
-            this.tokenType = tokenType;
-            this.expr = expr;
-            this.funcArgs = funcArgs;
-        }
-
-        public PrefixSuffixExpr(TokenType tokenType, ExprNode exprNode, PrefixSuffixExpr expr) {
+        public PrefixSuffixExpr(TokenType tokenType, ExprNode exprNode, ExprNode lhs) {
             this.tokenType = tokenType;
             this.exprNode = exprNode;
-            this.expr = expr;
+            this.lhs = lhs;
         }
 
-        public PrefixSuffixExpr(TokenType tokenType, String name, PrefixSuffixExpr expr) {
+        public PrefixSuffixExpr(TokenType tokenType, String name, ExprNode lhs) {
             this.tokenType = tokenType;
             this.name = name;
-            this.expr = expr;
+            this.lhs = lhs;
         }
 
 
@@ -138,21 +50,50 @@ public class PrefixExpr extends ExprNode {
             buf.append(" ");
             buf.append(this.tokenType);
             buf.append(" ");
-            if(expr != null){
+
+            if(lhs != null){
                 buf.append(" ");
-                buf.append(expr.toStringTree());
+                buf.append(lhs.toStringTree());
             }
 
             if(name != null){
                 buf.append(name);
-            }
-            if(exprNode != null){
+            }else if(exprNode != null){
                 buf.append(exprNode.toStringTree());
             }
-            if(funcArgs != null){
-                buf.append(funcArgs.toStringTree());
-            }
 
+            buf.append(")");
+            return buf.toString();
+        }
+    }
+
+
+    public static class PrefixExpr2 extends com.encryptlang.lua.ast.expr.PrefixExpr {
+
+        public  ExprNode lhs;
+
+        public  ExprNode rhs;
+
+
+        public PrefixExpr2(ExprNode lhs, ExprNode rhs) {
+            this.lhs = lhs;
+            this.rhs = rhs;
+        }
+
+        @Override
+        public String toString() {
+            return "PrefixExpr";
+        }
+
+        @Override
+        public String toStringTree() {
+            StringBuilder buf = new StringBuilder();
+            buf.append("(");
+            buf.append(this.toString());
+            buf.append(" ");
+            buf.append(lhs.toStringTree());
+            buf.append(" ");
+            buf.append(rhs.toStringTree());
             buf.append(")");
             return buf.toString();
         }

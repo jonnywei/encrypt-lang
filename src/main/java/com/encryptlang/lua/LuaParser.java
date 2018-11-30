@@ -3,6 +3,7 @@ package com.encryptlang.lua;
 import com.encryptlang.lua.ast.*;
 import com.encryptlang.lua.ast.expr.*;
 import com.encryptlang.lua.ast.stat.*;
+import com.encryptlang.lua.ast.stat.FuncCallStat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,16 +68,15 @@ public class LuaParser extends LLkParser {
                 }else {                                 // local declarations
                     return localDeclarationStatement();
                 }
-            case ID:
-                System.out.println((this.LT(2)));
-                if(this.LA(2) == TokenType.ASSIGN ){
-                    return  assignStatement();
-                }else if (this.LA(2) == TokenType.LPAREN ){
-                    return  funcCallStatement();
+            default:
+                ExprNode prefixExpr = prefixExpr();
+                if(prefixExpr instanceof FuncCallExpr){
+                    return funcCallStatement((FuncCallExpr)prefixExpr);
+                }else {
+                    return  assignStatement( prefixExpr );
                 }
-
         }
-        throw new Error(""+ LT(1));
+//        throw new Error(""+ LT(1));
 //        StatNode stat = new StatNode();
 //        return stat;
     }
@@ -223,20 +223,39 @@ public class LuaParser extends LLkParser {
     }
 
 
-    public FuncCallStat funcCallStatement(){
-        String name = LT(1).text;
-        match(TokenType.ID);
-        return new FuncCallStat(name,funcArgs());
+    public FuncCallStat funcCallStatement(FuncCallExpr funcCallExpr){
+        return new FuncCallStat(funcCallExpr.prefix,funcCallExpr.name,funcCallExpr.args);
     }
 
+    // 	varlist ::= var {‘,’ var}
 
-    public AssignStat assignStatement(){
-        String name = LT(1).text;
-        match(TokenType.ID);
+    public AssignStat assignStatement(ExprNode prefixExpr){
+        List<ExprNode> vars = new ArrayList<>();
+        vars.add(prefixExpr);
+        while(LA(1) == TokenType.COMMA){
+            match(TokenType.COMMA);
+            vars.add(var());
+        }
         match(TokenType.ASSIGN);
-        ExprNode expr = expr();
-        return new AssignStat(name,expr);
+        List<ExprNode> exprs = new ArrayList<>();
+        exprs.add(expr());
+        while(LA(1) == TokenType.COMMA){
+            match(TokenType.COMMA);
+            exprs.add(expr());
+        }
+        return new AssignStat(vars,exprs);
     }
+    // 	prefixexp ::= var | functioncall | ‘(’ exp ‘)’
+    // reuse prefixexp  但是不是是其他两种类型
+    public ExprNode var(){
+        ExprNode exprNode = prefixExpr();
+        if(!(exprNode instanceof FuncCallExpr) && !(exprNode instanceof ParenExpr)){
+            return exprNode;
+        }
+        throw new Error("expect var, found"+ exprNode.toStringTree());
+    }
+
+
 
     /**
      * 可以通过lookahead判断 la(2) is ASSIGN  for
@@ -364,11 +383,13 @@ public class LuaParser extends LLkParser {
         return  expr;
     }
 
-
+    // unary operators
     private ExprNode expr3(){
-        if(this.LA(1) == TokenType.SUB){
-            match(TokenType.SUB);
-            return  new UnopExpr(TokenType.UNMINUS,exprn());
+        TokenType tokenType = this.LA(1);
+        TokenType unary = tokenType;
+        if(( unary = Token.isUnary(tokenType)) != null){
+            match(tokenType);
+            return  new UnopExpr(unary,exprn());
         }else {
             ExprNode expr = exprn();
             return  expr;
@@ -470,19 +491,15 @@ public class LuaParser extends LLkParser {
 
 
     public FuncCallExpr funcCallExpr(){
-        String name = LT(1).text;
-        match(TokenType.ID);
-        match(TokenType.LPAREN);
-        List<ExprNode> args = new ArrayList<>();
-        while (LA(1) != TokenType.RPAREN){
-            ExprNode expr = expr();
-            args.add(expr);
-            if(LA(1) == TokenType.COMMA){
-                match(TokenType.COMMA);
-            }
+        String name = null;
+        ExprNode prefix = prefixExpr();
+        if(LA(1) == TokenType.COLON){
+            match(TokenType.COLON);
+            name = LT(1).text;
+            match(TokenType.ID);
         }
-        match(TokenType.RPAREN);
-        return new FuncCallExpr(name,args);
+        FuncArgs funcArgs = funcArgs();
+        return new FuncCallExpr(prefix,name,funcArgs);
     }
 
     public boolean isBlockEnd(){
@@ -559,7 +576,7 @@ public class LuaParser extends LLkParser {
             case LPAREN:
                 return parenPrefixExpr();
         }
-        throw new Error(""+ LT(1));
+        throw new Error("expect ID or (, found"+ LT(1));
     }
    /**
     *            prefixexp ::=  Name  pp | ‘(’ exp ‘)’ pp
@@ -574,19 +591,19 @@ public class LuaParser extends LLkParser {
      *
              */
 
-    private PrefixExpr2 namePrefixExpr(){
+    private ExprNode namePrefixExpr(){
         String name = LT(1).text;
         match(TokenType.ID);
-        PrefixExpr2.NamePrefixExpr  namePrefixExpr =  new PrefixExpr2.NamePrefixExpr(name);
-        return prefixExprSuffix(namePrefixExpr);
+        NameExpr nameExpr =  new NameExpr(name);
+        return prefixExprSuffix(nameExpr);
     }
 //     *            prefixexp ::=  Name  pp | ‘(’ exp ‘)’ pp
-    private PrefixExpr2 parenPrefixExpr(){
+    private ExprNode parenPrefixExpr(){
         match(TokenType.LPAREN);
         ExprNode exprNode = expr();
         match(TokenType.RPAREN);
-        PrefixExpr2.ParenPrefixExpr  parenPrefixExpr =  new PrefixExpr2.ParenPrefixExpr(exprNode);
-        return  prefixExprSuffix(parenPrefixExpr);
+        ParenExpr parenExpr =  new ParenExpr(exprNode);
+        return  prefixExprSuffix(parenExpr);
     }
 
     /**
@@ -598,30 +615,30 @@ public class LuaParser extends LLkParser {
      *
              */
 
-    private PrefixExpr2 prefixExprSuffix(PrefixExpr2 lhs){
+    private ExprNode prefixExprSuffix(ExprNode lhs){
         switch (this.LA(1)){
             case LBRACK:
                 match(TokenType.LBRACK);
                 ExprNode exprNode = expr();
                 match(TokenType.RBRACK);
-                lhs =  new PrefixExpr2.PrefixSuffixExpr(TokenType.LBRACK,exprNode,lhs);
+                lhs =  new PrefixExpr.PrefixSuffixExpr(TokenType.LBRACK,exprNode,lhs);
                 return prefixExprSuffix(lhs);
             case DOT:
                 match(TokenType.DOT);
                 String name = LT(1).text;
                 match(TokenType.ID);
-                lhs =  new  PrefixExpr2.PrefixSuffixExpr(TokenType.DOT, name,lhs);
+                lhs =  new  PrefixExpr.PrefixSuffixExpr(TokenType.DOT, name,lhs);
                 return prefixExprSuffix(lhs);
             case COLON:
                 match(TokenType.COLON);
                 name = LT(1).text;
                 match(TokenType.ID);
                 FuncArgs funcArgs =funcArgs();
-                lhs =  new   PrefixExpr2.PrefixSuffixExpr(TokenType.COLON, name,funcArgs, lhs);
+                lhs =  new  FuncCallExpr(lhs,name,funcArgs);
                 return prefixExprSuffix(lhs);
             case LPAREN:
                  funcArgs =funcArgs();
-                 lhs =  new   PrefixExpr2.PrefixSuffixExpr(TokenType.FUNCTION, funcArgs, lhs);
+                lhs =  new  FuncCallExpr(lhs,null,funcArgs);
                 return prefixExprSuffix(lhs);
         }
         return lhs;

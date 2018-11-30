@@ -1,16 +1,18 @@
 package com.encryptlang.lua.ast;
 
 
+import java.util.List;
+
 public class AssignStat extends StatNode {
 
-    public String variable;
+    public List<ExprNode> variables;
 
-    public ExprNode expression;
+    public List<ExprNode> expressions;
 
 
-    public AssignStat(String variable, ExprNode expression) {
-        this.variable = variable;
-        this.expression = expression;
+    public AssignStat(List<ExprNode> variables, List<ExprNode> expressions) {
+        this.variables = variables;
+        this.expressions = expressions;
     }
 
     @Override
@@ -24,9 +26,14 @@ public class AssignStat extends StatNode {
         buf.append("(");
         buf.append(this.toString());
         buf.append(" ");
-        buf.append(variable);
-        buf.append(" ");
-        buf.append(expression);
+        for(int i=0; variables != null && i<variables.size();  i++){
+            buf.append(" ");
+            buf.append(variables.get(i).toStringTree());
+        }
+        for(int i=0; expressions != null && i<expressions.size();  i++){
+            buf.append(" ");
+            buf.append(expressions.get(i).toStringTree());
+        }
         buf.append(")");
         return buf.toString();
     }

@@ -5,9 +5,7 @@ public enum TokenType {
     ID("ID"),
     NUMBER("NUMBER"),
     STRING("STRING"),
-    NIL("NIL"),
-    FALSE("FALSE"),
-    TRUE("TRUE"),
+
     COMMA("COMMA"),         // ,
     LBRACK("LBRACK"),       // [
     RBRACK("RBRACK"),       // ]
@@ -17,32 +15,40 @@ public enum TokenType {
     LABEL("LABEL"),         // ::
     LPAREN("LPAREN"),       // (
     RPAREN("RPAREN"),       // )
-    DOT("DOT"),            // .
-    CONCAT("CONCAT"),      // ..
-    VARARG("VARARG"),      // ...
-    SEMI("SEMI"),
+    DOT("DOT"),             // .
+    CONCAT("CONCAT"),       // ..
+    VARARG("VARARG"),       // ...
+    SEMI("SEMI"),           // ;
+
+    //binary operators
     ADD("ADD"),            // +
-    SUB("SUB"),            // -
+    SUB("SUB"),            // -   // same as unary minus default
     DIV("DIV"),            // /
+    IDIV("IDIV"),          // //
     MUL("MUL"),            // *
     POWER("POWER"),        // ^
+    MOD("MOD"),            // %
     GT("GT"),              // >
     GE("GE"),              // >=
     SHR("SHR"),            // >>
     LT("LT"),              // <
     LE("LE"),              // <=
     SHL("SHL"),            // <<
-    NOT("NOT"),
     ASSIGN("ASSIGN"),      // =
     EQUAL("EQUAL"),        // ==
     NEQUAL("NEQUAL"),      // ~=
-    SHARP("#"),            // #
+    BAND("BITWISE_AND"),   // &
+    BOR("BITWISE_OR"),     // |
+    // xor
+    BXOR("BITWISE_XOR"),   // ~    default  binary operator  xor  same as bitwise not
 
     //keywords
+    NIL("NIL"),
+    FALSE("FALSE"),
+    TRUE("TRUE"),
     DO("DO"),
     END("END"),            // end
     WHILE("WHILE"),
-
     REPEAT("REPEAT"),
     UNTIL("UNTIL"),
     IF("IF"),
@@ -51,15 +57,24 @@ public enum TokenType {
     ELSE("ELSE"),
     FOR("FOR"),
     IN("IN"),
-
     FUNCTION("FUNCTION"), // function
     LOCAL("LOCAL"),
     BREAK("BREAK"),       // break
-    GOTO("goto"),         // goto
+    GOTO("GOTO"),         // goto
     RETURN("RETURN"),
-    AND("AND"),
-    OR("OR"),
-    UNMINUS("UNMINUS"),      // -
+
+    // logical operators
+    AND("AND"),           // and
+    OR("OR"),             // or
+    //unary operators
+    NOT("NOT"),           // not
+
+
+    // unary operators
+    UNMINUS("UNMINUS"),   // -
+    BNOT ("BITWISE_NOT"), // ~     unary operators   bitwise not
+    LENGTH ("LENGTH"),    // #
+
 
     ;
 
