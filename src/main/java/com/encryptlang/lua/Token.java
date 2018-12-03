@@ -62,7 +62,15 @@ public class Token {
 
         BINOPS.put(TokenType.OR,1);
         BINOPS.put(TokenType.AND,2);
-        BINOPS.put(TokenType.POWER,3);
+
+        BINOPS.put(TokenType.LT,3);
+        BINOPS.put(TokenType.LE,3);
+        BINOPS.put(TokenType.GT,3);
+        BINOPS.put(TokenType.GE,3);
+        BINOPS.put(TokenType.EQUAL,3);
+        BINOPS.put(TokenType.NEQUAL,3);
+
+
 
         BINOPS.put(TokenType.ADD,9);
         BINOPS.put(TokenType.SUB,9);

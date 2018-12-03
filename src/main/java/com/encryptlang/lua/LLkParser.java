@@ -31,7 +31,7 @@ public abstract class LLkParser extends Parser {
             consume();
         }else {
             throw new Error("expect type "+ tokenType
-                    + ", found "+ LT(1));
+                    + ", found "+ LT(1) +" line ="+ lexer.line);
         }
     }
 

@@ -29,9 +29,8 @@ public class FuncCallExpr extends ExprNode {
         StringBuilder buf = new StringBuilder();
         buf.append("(");
         buf.append(this.toString());
-
+        buf.append(" ");
         buf.append(prefix.toStringTree());
-
         if(name != null){
             buf.append(":"+name);
         }
