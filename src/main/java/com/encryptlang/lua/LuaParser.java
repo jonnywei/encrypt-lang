@@ -421,13 +421,13 @@ public class LuaParser extends LLkParser {
     private ExprNode exprn(){
         if(this.LA(1) == TokenType.NIL){
             match(TokenType.NIL);
-            return new NilExp();
+            return new NilExpr();
         }else if(this.LA(1) == TokenType.TRUE){
             match(TokenType.TRUE);
-            return new TrueExp();
+            return new TrueExpr();
         }else if(this.LA(1) == TokenType.FALSE){
             match(TokenType.FALSE);
-            return new FalseExp();
+            return new FalseExpr();
         }else if(this.LA(1) == TokenType.NUMBER){
             String str = LT(1).text;
             match(TokenType.NUMBER);

@@ -1,7 +1,10 @@
-package com.encryptlang.lua.ast;
+package com.encryptlang.lua.ast.stat;
 
 
 // "do" Block "end"
+
+import com.encryptlang.lua.ast.Block;
+import com.encryptlang.lua.ast.StatNode;
 
 public class DoStat extends StatNode {
 

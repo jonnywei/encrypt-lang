@@ -1,5 +1,9 @@
-package com.encryptlang.lua.ast;
+package com.encryptlang.lua.ast.stat;
 
+
+import com.encryptlang.lua.ast.Block;
+import com.encryptlang.lua.ast.ExprNode;
+import com.encryptlang.lua.ast.StatNode;
 
 import java.util.List;
 

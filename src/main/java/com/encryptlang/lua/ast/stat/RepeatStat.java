@@ -1,18 +1,22 @@
-package com.encryptlang.lua.ast;
+package com.encryptlang.lua.ast.stat;
 
-public class WhileStat extends StatNode {
+import com.encryptlang.lua.ast.Block;
+import com.encryptlang.lua.ast.ExprNode;
+import com.encryptlang.lua.ast.StatNode;
+
+public class RepeatStat extends StatNode {
 
     public ExprNode expr;
 
     public Block block;
 
-    public WhileStat(ExprNode expr,Block block) {
+    public RepeatStat(ExprNode expr, Block block) {
         this.expr = expr;
         this.block = block;
     }
     @Override
     public String toString() {
-        return "WHILE";
+        return "REPEAT";
     }
     @Override
     public String toStringTree() {
@@ -20,9 +24,9 @@ public class WhileStat extends StatNode {
         buf.append("(");
         buf.append(this.toString());
         buf.append(" ");
-        buf.append(expr.toStringTree());
-        buf.append(" ");
         buf.append(block.toStringTree());
+        buf.append(" ");
+        buf.append(expr.toStringTree());
         buf.append(")");
         return buf.toString();
     }

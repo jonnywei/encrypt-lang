@@ -1,5 +1,7 @@
 package com.encryptlang.lua;
 
+import com.encryptlang.lua.tree.ASTVisitor;
+
 /**
  *  ast
  */
@@ -24,5 +26,10 @@ public abstract class AST {
     }
 
     public abstract String toStringTree();
+
+
+    public void visit(ASTVisitor vistor){
+        vistor.visit(this);
+    }
 
 }

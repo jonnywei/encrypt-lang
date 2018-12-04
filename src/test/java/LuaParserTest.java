@@ -1,6 +1,7 @@
 import com.encryptlang.lua.LuaLexer;
 import com.encryptlang.lua.LuaParser;
 import com.encryptlang.lua.ast.Block;
+import com.encryptlang.lua.tree.PrintVisitor;
 import org.junit.Test;
 
 public class LuaParserTest {
@@ -467,5 +468,28 @@ public class LuaParserTest {
         Block block =  parser.block();
         System.out.println(block.toStringTree());
 
+    }
+
+
+    @Test
+    public  void testLuaPrefix1(){
+        String input = "local m = ngxmatch(data,[[Content-Disposition: form-data;(.+)filename=\\\"(.+)\\\\\\\\.(.*)\\\"]],'ijo')";
+//        String aa = "sss".substring() ;
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        System.out.println(block.toStringTree());
+
+    }
+
+
+    @Test
+    public void testLuaIf1(){
+        String input = "  if true then do ; end else ; end enda =  { k= 2222; x ;  2222*222,}  ";
+        LuaLexer jsonLexer = new LuaLexer(input);
+        LuaParser parser = new LuaParser(jsonLexer);
+        Block block =  parser.block();
+        PrintVisitor printVistor = new PrintVisitor();
+        printVistor.visit(block)   ;
     }
 }
